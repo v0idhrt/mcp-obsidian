@@ -57,7 +57,7 @@ class Obsidian():
 
         
     def list_files_in_dir(self, dirpath: str) -> Any:
-        url = f"{self.get_base_url()}/vault/{dirpath}/"
+        url = f"{self.get_base_url()}/vault/{urllib.parse.quote(dirpath, safe='/')}/"
         
         def call_fn():
             response = requests.get(url, headers=self._get_headers(), verify=self.verify_ssl, timeout=self.timeout)
@@ -68,7 +68,7 @@ class Obsidian():
         return self._safe_call(call_fn)
 
     def get_file_contents(self, filepath: str) -> Any:
-        url = f"{self.get_base_url()}/vault/{filepath}"
+        url = f"{self.get_base_url()}/vault/{urllib.parse.quote(filepath, safe='/')}"
     
         def call_fn():
             response = requests.get(url, headers=self._get_headers(), verify=self.verify_ssl, timeout=self.timeout)
@@ -114,13 +114,13 @@ class Obsidian():
         return self._safe_call(call_fn)
     
     def append_content(self, filepath: str, content: str) -> Any:
-        url = f"{self.get_base_url()}/vault/{filepath}"
-        
+        url = f"{self.get_base_url()}/vault/{urllib.parse.quote(filepath, safe='/')}"
+
         def call_fn():
             response = requests.post(
-                url, 
-                headers=self._get_headers() | {'Content-Type': 'text/markdown'}, 
-                data=content,
+                url,
+                headers=self._get_headers() | {'Content-Type': 'text/markdown; charset=utf-8'},
+                data=content.encode('utf-8'),
                 verify=self.verify_ssl,
                 timeout=self.timeout
             )
@@ -130,30 +130,30 @@ class Obsidian():
         return self._safe_call(call_fn)
     
     def patch_content(self, filepath: str, operation: str, target_type: str, target: str, content: str) -> Any:
-        url = f"{self.get_base_url()}/vault/{filepath}"
-        
+        url = f"{self.get_base_url()}/vault/{urllib.parse.quote(filepath, safe='/')}"
+
         headers = self._get_headers() | {
-            'Content-Type': 'text/markdown',
+            'Content-Type': 'text/markdown; charset=utf-8',
             'Operation': operation,
             'Target-Type': target_type,
             'Target': urllib.parse.quote(target)
         }
         
         def call_fn():
-            response = requests.patch(url, headers=headers, data=content, verify=self.verify_ssl, timeout=self.timeout)
+            response = requests.patch(url, headers=headers, data=content.encode('utf-8'), verify=self.verify_ssl, timeout=self.timeout)
             response.raise_for_status()
             return None
 
         return self._safe_call(call_fn)
 
     def put_content(self, filepath: str, content: str) -> Any:
-        url = f"{self.get_base_url()}/vault/{filepath}"
-        
+        url = f"{self.get_base_url()}/vault/{urllib.parse.quote(filepath, safe='/')}"
+
         def call_fn():
             response = requests.put(
-                url, 
-                headers=self._get_headers() | {'Content-Type': 'text/markdown'}, 
-                data=content,
+                url,
+                headers=self._get_headers() | {'Content-Type': 'text/markdown; charset=utf-8'},
+                data=content.encode('utf-8'),
                 verify=self.verify_ssl,
                 timeout=self.timeout
             )
@@ -164,14 +164,14 @@ class Obsidian():
     
     def delete_file(self, filepath: str) -> Any:
         """Delete a file or directory from the vault.
-        
+
         Args:
             filepath: Path to the file to delete (relative to vault root)
-            
+
         Returns:
             None on success
         """
-        url = f"{self.get_base_url()}/vault/{filepath}"
+        url = f"{self.get_base_url()}/vault/{urllib.parse.quote(filepath, safe='/')}"
         
         def call_fn():
             response = requests.delete(url, headers=self._get_headers(), verify=self.verify_ssl, timeout=self.timeout)
