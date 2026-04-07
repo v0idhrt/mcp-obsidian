@@ -16,6 +16,7 @@ from mcp.types import (
 load_dotenv()
 
 from . import tools
+from . import kb_tools
 
 # Load environment variables
 
@@ -54,6 +55,16 @@ add_tool_handler(tools.BatchGetFileContentsToolHandler())
 add_tool_handler(tools.PeriodicNotesToolHandler())
 add_tool_handler(tools.RecentPeriodicNotesToolHandler())
 add_tool_handler(tools.RecentChangesToolHandler())
+
+add_tool_handler(kb_tools.FetchUrlToolHandler())
+add_tool_handler(kb_tools.ExtractPdfToolHandler())
+add_tool_handler(kb_tools.GetVaultStructureToolHandler())
+add_tool_handler(kb_tools.GetTaxonomyToolHandler())
+add_tool_handler(kb_tools.FindRelatedNotesToolHandler())
+add_tool_handler(kb_tools.SaveAtomicNoteToolHandler())
+add_tool_handler(kb_tools.UpdateMocToolHandler())
+add_tool_handler(kb_tools.SaveBinaryToolHandler())
+add_tool_handler(kb_tools.ListMocsToolHandler())
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
